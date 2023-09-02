@@ -24,8 +24,9 @@ import {
 import { Bubble, Wall } from "../drawing";
 import { useGravity } from "../hooks";
 import { roundDigitsLength } from "../utils";
+import { Audio } from 'expo-av';
 
-const BUBBLE_IMAGE_PATH = require("../../assets/bubble.png");
+const BUBBLE_IMAGE_PATH = require("../drawing/assets/bubbleResize.png");
 
 export type Placeholder = {
   id: number;
@@ -39,6 +40,27 @@ export function BubblesContainer(props: {
   placeholders?: Placeholder[];
   children: React.ReactNode;
 }) {
+  const [sound, setSound] = React.useState<Audio.Sound | null>();
+
+  async function playSound() {
+    console.log("Loading Sound");
+    const { sound } = await Audio.Sound.createAsync(
+      require("../../assets/shot.mp3")
+    );
+    setSound(sound);
+
+    console.log("Playing Sound");
+    await sound.playAsync();
+  }
+
+  React.useEffect(() => {
+    return sound
+      ? () => {
+          console.log("Unloading Sound");
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
   const { placeholders, children } = props;
   const image = useImage(BUBBLE_IMAGE_PATH);
 
@@ -171,9 +193,11 @@ export function BubblesContainer(props: {
         });
       },
       onEnd: (info) => {
+        console.log({ info });
         if (!draggingBody) {
           return;
         }
+        playSound()
 
         Body.setStatic(draggingBody, false);
 

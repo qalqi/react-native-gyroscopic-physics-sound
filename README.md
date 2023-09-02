@@ -1,4 +1,4 @@
-# react-native-gyroscopic-physics
+# react-native-gyroscopic-physics-sound
 
 This repository showcases the possibilities of mixing a physics engine, Skia, sensors, and UI elements, to create a fully interactive experience in a React Native application. 
 
